@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:task_manager_1/Controller/CompleteTaskController.dart';
 import '../../Data/Modal/TaskListModal.dart';
-import '../../Data/networkCaller/NetworkCaller.dart';
-import '../../Data/networkCaller/NetworkResponse.dart';
-import '../../Data/utility/Url.dart';
 import '../../Widget/ProfileSummaryCard.dart';
 import '../../Widget/TaskCard.dart';
 import '../../Widget/bodyBackground.dart';
@@ -16,23 +15,14 @@ class CompleteTaskScreen extends StatefulWidget {
 
 class _CompleteTaskScreenState extends State<CompleteTaskScreen> {
   bool loading = false;
-  TaskListModal taskListModal = TaskListModal();
+  TaskListModal _taskListModal = TaskListModal();
+  final CompleteTaskController _completeTaskController =
+      Get.find<CompleteTaskController>();
 
   Future<void> getCompleteTaskList() async {
-    if (mounted) {
-      setState(() {
-        loading = true;
-      });
-    }
-    final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.getCompletedTask);
-    if (response.isSuccess) {
-      taskListModal = TaskListModal.fromJson(response.jsonResponse);
-    }
-    if (mounted) {
-      setState(() {
-        loading = false;
-      });
+    final response = await _completeTaskController.getCompleteTaskList();
+    if (response == true) {
+      _taskListModal = _completeTaskController.taskListModal;
     }
   }
 
@@ -50,26 +40,32 @@ class _CompleteTaskScreenState extends State<CompleteTaskScreen> {
           children: [
             const ProfileSummeryCard(),
             Expanded(
-                child: bodyBackground(
-              child: Visibility(
-                visible: loading == false,
-                replacement: const Center(
-                  child: CircularProgressIndicator(),
-                ),
-                child: RefreshIndicator(
-                  onRefresh: getCompleteTaskList,
-                  child: ListView.builder(
-                      itemCount: taskListModal.TaskList?.length,
-                      itemBuilder: (context, index) {
-                        return TaskCard(
-                          task: taskListModal.TaskList![index],
-                          chipColor: Colors.green,
-                          refresh: getCompleteTaskList,
-                        );
-                      }),
+              child: bodyBackground(
+                child: GetBuilder<CompleteTaskController>(
+                  builder: (controller) {
+                    return Visibility(
+                      visible: controller.loading == false,
+                      replacement: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      child: RefreshIndicator(
+                        onRefresh: getCompleteTaskList,
+                        child: ListView.builder(
+                          itemCount: _taskListModal.TaskList?.length,
+                          itemBuilder: (context, index) {
+                            return TaskCard(
+                              task: _taskListModal.TaskList![index],
+                              chipColor: Colors.green,
+                              refresh: getCompleteTaskList,
+                            );
+                          },
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
-            ))
+            )
           ],
         ),
       ),

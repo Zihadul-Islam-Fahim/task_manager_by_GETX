@@ -1,13 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:get/get.dart';
+import 'package:task_manager_1/Controller/EditProfileController.dart';
 import 'package:task_manager_1/Data/Modal/UserModel.dart';
-import 'package:task_manager_1/Data/networkCaller/NetworkCaller.dart';
 import 'package:task_manager_1/Widget/ProfileSummaryCard.dart';
 import 'package:task_manager_1/Widget/bodyBackground.dart';
 import '../Controller/authController.dart';
-import '../Data/utility/Url.dart';
-import '../Widget/SnackBar.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final user;
@@ -19,16 +17,16 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  bool loading = false;
-  String? photoInBase64 ;
+  String? photoInBase64;
+
   final TextEditingController _emailTEController = TextEditingController();
   final TextEditingController _firstNameTEController = TextEditingController();
   final TextEditingController _lastNameTEController = TextEditingController();
   final TextEditingController _mobileTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  XFile? photo;
+  final EditProfileController _editProfileController =
+      Get.find<EditProfileController>();
 
   updateProfile() async {
     Map<String, dynamic> inputData = {
@@ -38,42 +36,36 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       "mobile": _mobileTEController.text.trim(),
       "photo": ""
     };
+
     if (_passwordTEController.text.isNotEmpty) {
       inputData["password"] = _passwordTEController.text;
     }
 
-    if (photo != null) {
-      List<int> imageBytes = await photo!.readAsBytes();
+    if (_editProfileController.photo != null) {
+      List<int> imageBytes = await _editProfileController.photo!.readAsBytes();
       photoInBase64 = base64Encode(imageBytes);
       inputData["photo"] = photoInBase64;
     }
 
-    setState(() {
-      loading = true;
-    });
-    var response =
-        await NetworkCaller().postRequest(Urls.profileUpdate, body: inputData);
+    var response = await _editProfileController.updateProfile(inputData);
 
-    if (mounted && response.isSuccess) {
-      await AuthController.updateUserInformation(UserModel(
+    if (response == true) {
+      await Get.find<AuthController>().updateUserInformation(UserModel(
           email: _emailTEController.text.trim(),
           firstName: _firstNameTEController.text.trim(),
           lastName: _lastNameTEController.text.trim(),
           mobile: _mobileTEController.text.trim(),
-          photo: photoInBase64  ?? AuthController.user!.photo ));
-      mySnackbar(context, 'Profile Updated');
-      setState(() {
-        loading = false;
-      });
-      Navigator.pop(context);
-      setState(() {});
+          photo: photoInBase64 ?? AuthController.user!.photo));
+
+      Get.back();
+
+      Get.snackbar("Update Succesful", "Profile Updated",
+          snackPosition: SnackPosition.BOTTOM);
     } else {
-      setState(() {
-        mySnackbar(context, 'Error!!', true);
-        setState(() {
-          loading = false;
-        });
-      });
+      Get.snackbar('Error', '',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM);
     }
   }
 
@@ -173,20 +165,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         const SizedBox(
                           height: 16,
                         ),
-                        Visibility(
-                          visible: loading == false,
-                          replacement: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                          child: ElevatedButton(
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  updateProfile();
-                                }
-                              },
-                              child:
-                                  const Icon(Icons.arrow_forward_ios_rounded)),
-                        ),
+                        GetBuilder<EditProfileController>(
+                            builder: (controller) {
+                          return Visibility(
+                            visible: controller.loading == false,
+                            replacement: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    updateProfile();
+                                  }
+                                },
+                                child: const Icon(
+                                    Icons.arrow_forward_ios_rounded)),
+                          );
+                        }),
                       ],
                     ),
                   ),
@@ -220,26 +215,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               )),
           Expanded(
-              flex: 3,
-              child: GestureDetector(
-                onTap: () async {
-                  final XFile? image = await ImagePicker()
-                      .pickImage(source: ImageSource.camera, imageQuality: 30);
-                  if (image != null) {
-                    photo = image;
-                    if (mounted) {
-                      setState(() {});
-                    }
-                  }
-                },
-                child: Container(
-                  color: Colors.white,
-                  child: Visibility(
-                      visible: photo == null,
-                      replacement: Text(photo?.name ?? ''),
-                      child: const Center(child: Text("Select a Photo"))),
-                ),
-              )),
+            flex: 3,
+            child: GestureDetector(
+              onTap: () async {
+                await _editProfileController.selectPhoto();
+              },
+              child: Container(
+                color: Colors.white,
+                child: GetBuilder<EditProfileController>(builder: (controller) {
+                  return Visibility(
+                      visible: controller.photo == null,
+                      replacement:
+                          Text(_editProfileController.photo?.path ?? ''),
+                      child: const Center(child: Text("Select a Photo")));
+                }),
+              ),
+            ),
+          ),
         ],
       ),
     );

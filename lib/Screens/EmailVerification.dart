@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:task_manager_1/Controller/EmailVerifyController.dart';
 import 'package:task_manager_1/Controller/authController.dart';
-import 'package:task_manager_1/Data/networkCaller/NetworkCaller.dart';
-import 'package:task_manager_1/Data/networkCaller/NetworkResponse.dart';
 import 'package:task_manager_1/Data/utility/Validator.dart';
 import 'package:task_manager_1/Screens/PinVerification.dart';
-import 'package:task_manager_1/Widget/SnackBar.dart';
 import 'package:task_manager_1/Widget/bodyBackground.dart';
-import '../Data/utility/Url.dart';
 
 class EmailVerification extends StatefulWidget {
   const EmailVerification({super.key});
@@ -18,28 +16,25 @@ class EmailVerification extends StatefulWidget {
 class _EmailVerificationState extends State<EmailVerification> {
   final TextEditingController _emailController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool loading = false;
+  final EmailVerityController _emailVerityController =
+      Get.find<EmailVerityController>();
 
   Future<void> sendCodeToEmail() async {
     String? email = _emailController.text.trim();
-    AuthController.saveEmailAndOtp('email', email);
-    final NetworkResponse response =
-        await NetworkCaller().getRequest1(Urls.verifyEmail, email);
-    if (response.isSuccess) {
-      if (mounted) {
-        mySnackbar(context, 'OTP send to your Email');
-        setState(() {
-          loading = false;
-        });
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const PinVerification()));
-      }
+    Get.find<AuthController>().saveEmailAndOtp('email', email);
+    final response = await _emailVerityController.sendCodeToEmail(email);
+    if (response == true) {
+      Get.snackbar("Code Sent to your Mail", _emailVerityController.message,
+          snackPosition: SnackPosition.BOTTOM);
+      Get.to(const PinVerification());
     } else {
-      if (mounted) {
-        mySnackbar(context, 'Error!! Try Again ', true);
-        loading = false;
-        setState(() {});
-      }
+      Get.snackbar(
+        "Code Sent Error,Try again!!",
+        _emailVerityController.message,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 
@@ -78,30 +73,28 @@ class _EmailVerificationState extends State<EmailVerification> {
                   ),
                   TextFormField(
                     controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
                     validator: validateEmail,
                     decoration: const InputDecoration(hintText: "Email"),
                   ),
                   const SizedBox(
                     height: 14,
                   ),
-                  Visibility(
-                    visible: loading == false,
-                    replacement: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                    child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            if (mounted) {
-                              setState(() {
-                                loading = true;
-                                sendCodeToEmail();
-                              });
+                  GetBuilder<EmailVerityController>(builder: (controller) {
+                    return Visibility(
+                      visible: controller.loading == false,
+                      replacement: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      child: ElevatedButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              sendCodeToEmail();
                             }
-                          }
-                        },
-                        child: const Icon(Icons.arrow_forward_ios_rounded)),
-                  ),
+                          },
+                          child: const Icon(Icons.arrow_forward_ios_rounded)),
+                    );
+                  }),
                   const SizedBox(
                     height: 48,
                   ),
@@ -113,9 +106,10 @@ class _EmailVerificationState extends State<EmailVerification> {
       )),
     );
   }
+
   @override
   void dispose() {
-   _emailController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 }

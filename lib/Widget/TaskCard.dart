@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_manager_1/Data/networkCaller/NetworkCaller.dart';
-import 'package:task_manager_1/Widget/SnackBar.dart';
 import '../Data/Modal/Task.dart';
 import '../Data/utility/Url.dart';
 
@@ -31,13 +31,12 @@ class _TaskCardState extends State<TaskCard> {
         await NetworkCaller().getRequest(Urls.deleteTask(widget.task.sId));
 
     if (response.isSuccess) {
-      if (mounted) {
-        mySnackbar(context, 'Delete Success');
-      }
+      Get.snackbar('Delete Success', '', snackPosition: SnackPosition.BOTTOM);
     } else {
-      if (mounted) {
-        mySnackbar(context, 'Delete failed....', true);
-      }
+      Get.snackbar('Delete Failed!', '',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM);
     }
     widget.refresh();
     widget.getTaskCount!();
@@ -48,12 +47,16 @@ class _TaskCardState extends State<TaskCard> {
         .getRequest(Urls.updateTaskStatus(widget.task.sId, status));
     widget.refresh();
     widget.getTaskCount!();
-    if (response.isSuccess && mounted) {
-      mySnackbar(context, 'Status Updated..');
+    if (response.isSuccess) {
+      Get.snackbar('Status Updated', '', snackPosition: SnackPosition.BOTTOM);
     } else {
-      if (mounted) {
-        mySnackbar(context, 'Status Update failed....');
-      }
+      Get.snackbar(
+        'Status Update failed..',
+        '',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 
@@ -68,14 +71,21 @@ class _TaskCardState extends State<TaskCard> {
           children: [
             Text(
               widget.task.title.toString(),
-              style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 18),
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 19),
             ),
             Text(
               widget.task.description ?? '',
-              style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 14),
+              style: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                  color: Colors.grey),
             ),
             Text(
               'Date : ${widget.task.createdDate ?? ''}',
+              style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 11,
+                  color: Colors.grey.shade700),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -90,10 +100,11 @@ class _TaskCardState extends State<TaskCard> {
                 Wrap(
                   children: [
                     IconButton(
-                        onPressed: () {
-                          showUpdateStatusModal();
-                        },
-                        icon: const Icon(Icons.edit)),
+                      onPressed: () {
+                        showUpdateStatusModal();
+                      },
+                      icon: Icon(Icons.edit_note_outlined),
+                    ),
                     IconButton(
                         onPressed: () {
                           ShowModalforDelete();
@@ -124,7 +135,7 @@ class _TaskCardState extends State<TaskCard> {
               children: [
                 TextButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      Get.back();
                     },
                     child: const Text(
                       'Cancel',
@@ -133,7 +144,7 @@ class _TaskCardState extends State<TaskCard> {
                 TextButton(
                   onPressed: () {
                     deleteTasks();
-                    Navigator.pop(context);
+                    Get.back();
                   },
                   child: const Text(
                     'Delete',
@@ -154,7 +165,7 @@ class _TaskCardState extends State<TaskCard> {
           (e) => ListTile(
             onTap: () {
               updateTaskStatus(e.name);
-              Navigator.pop(context);
+              Get.back();
             },
             title: Text(e.name),
           ),
@@ -175,7 +186,7 @@ class _TaskCardState extends State<TaskCard> {
               children: [
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Get.back();
                   },
                   child: const Text(
                     'Cancel',

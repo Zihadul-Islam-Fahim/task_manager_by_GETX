@@ -5,12 +5,13 @@ import 'package:task_manager_1/App.dart';
 import 'package:task_manager_1/Controller/authController.dart';
 import 'package:task_manager_1/Screens/LogInScreen.dart';
 import 'NetworkResponse.dart';
+import 'package:get/get.dart';
 
 class NetworkCaller {
   Future<NetworkResponse> postRequest(String url,
       {Map<String, dynamic>? body, bool isLogin = false}) async {
     try {
-      final Response response = await post(Uri.parse(url),
+      final  response = await post(Uri.parse(url),
           body: jsonEncode(body),
           headers: {
             'Content-type': 'Application/json',
@@ -43,7 +44,7 @@ class NetworkCaller {
 
   Future<NetworkResponse> getRequest(String url) async {
     try {
-      final Response response = await get(Uri.parse(url), headers: {
+      final  response = await get(Uri.parse(url), headers: {
         'Content-type': 'Application/json',
         'token': AuthController.token.toString()
       });
@@ -72,7 +73,7 @@ class NetworkCaller {
   Future<NetworkResponse> getRequest1(String url, email,
       {String? otp = ''}) async {
     try {
-      final Response response = await get(
+      final  response = await get(
         Uri.parse('$url/$email/$otp'),
       );
       var data = jsonDecode(response.body);
@@ -94,7 +95,7 @@ class NetworkCaller {
   }
 
   void backToLogin() async {
-    await AuthController.clearAuthData();
+    await Get.find<AuthController>().clearAuthData();
     Navigator.push(TaskManagerApp.navigationKey.currentContext!,
         MaterialPageRoute(builder: (context) => const LogInScreen()));
   }
