@@ -26,6 +26,12 @@ class _BottomBar_ScreenState extends State<BottomBar_Screen> {
   ];
 
   @override
+  void initState() {
+    _bottomNavController.backToHome();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GetBuilder<BottomNavController>(builder: (controller) {
       return Scaffold(
@@ -49,6 +55,7 @@ class _BottomBar_ScreenState extends State<BottomBar_Screen> {
           },
         ),
       );
-    });
+    },
+    );
   }
 }

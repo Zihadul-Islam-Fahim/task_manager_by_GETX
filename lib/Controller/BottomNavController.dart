@@ -9,4 +9,8 @@ class BottomNavController extends GetxController{
     _selectedIndex = index;
     update();
   }
+
+  backToHome(){
+    changeIndex(0);
+  }
 }
