@@ -1,5 +1,11 @@
 # Task manager
 
+Frameworks and tools
+  ---
+  * Flutter
+  * REST API
+  * GETX Engine
+
   Features
   ---
   ##### This project contains several features like
@@ -8,12 +14,7 @@
   * Can Add New Task
   * Update Task Status
   * Delete a Task
-
-  Frameworks and tools
-  ---
-  * Flutter
-  * REST API
-  * GETX Engine
+    
 # App Screens
 
 <p align="start">
