@@ -1,3 +1,21 @@
+# Task manager
+
+  Features
+  ---
+  ##### This project contains several features like
+  * User Authentication
+  * Edit User Profile
+  * Can Add New Task
+  * Update Task Status
+  * Delete a Task
+
+  Frameworks and tools
+  ---
+  * Flutter
+  * REST API
+  * GETX Engine
+# App Screens
+
 <p align="start">
   <img alt="Light" src="https://github.com/Zihadul-Islam-Fahim/task_manager_by_GetX/assets/82943440/8f44b2c3-4e8b-4e72-a7ec-e79084e0a27c" width="20%">
 &nbsp; &nbsp; &nbsp; &nbsp;
