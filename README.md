@@ -53,9 +53,6 @@ Frameworks and tools
   <img alt="Dark" src="https://github.com/Zihadul-Islam-Fahim/task_manager_by_GetX/assets/82943440/4ef47e70-6f57-4723-a30a-f4c327be8775" width="20%">
   &nbsp; &nbsp; &nbsp; &nbsp;
 
-  <img alt="Dark" src="https://github.com/Zihadul-Islam-Fahim/task_manager_by_GetX/assets/82943440/8d71dadb-e7c3-4d55-8067-d60cf0dd8ef9" width="20%">
-  &nbsp; &nbsp; &nbsp; &nbsp;
-
   <img alt="Dark" src="https://github.com/Zihadul-Islam-Fahim/task_manager_by_GetX/assets/82943440/6a8236a2-7518-4d2e-a022-0ec8301a6814" width="20%">
   &nbsp; &nbsp; &nbsp; &nbsp;
 
