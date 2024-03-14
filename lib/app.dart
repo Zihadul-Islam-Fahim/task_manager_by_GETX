@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_manager_1/Controller/add_task_controller.dart';
-import 'package:task_manager_1/Controller/bottom_nav_controller.dart';
-import 'package:task_manager_1/Controller/canceled_task_controller.dart';
-import 'package:task_manager_1/Controller/completed_task_controller.dart';
-import 'package:task_manager_1/Controller/set_pass_controller.dart';
-import 'package:task_manager_1/Controller/update_profile_controller.dart';
-import 'package:task_manager_1/Controller/email_verification_controller.dart';
-import 'package:task_manager_1/Controller/login_controller.dart';
-import 'package:task_manager_1/Controller/new_task_controller.dart';
-import 'package:task_manager_1/Controller/pin_verification_controller.dart';
-import 'package:task_manager_1/Controller/reg_controller.dart';
-import 'package:task_manager_1/Controller/task_count_controller.dart';
 import 'package:task_manager_1/Screens/splash_screen.dart';
-import 'Controller/progress_task_controller.dart';
-import 'Controller/auth_controller.dart';
+import 'package:task_manager_1/controllers/email_verification_controller.dart';
+import 'package:task_manager_1/controllers/set_pass_controller.dart';
+import 'package:task_manager_1/controllers/update_profile_controller.dart';
+import 'controllers/add_task_controller.dart';
+import 'controllers/auth_controller.dart';
+import 'controllers/bottom_nav_controller.dart';
+import 'controllers/canceled_task_controller.dart';
+import 'controllers/completed_task_controller.dart';
+import 'controllers/login_controller.dart';
+import 'controllers/new_task_controller.dart';
+import 'controllers/pin_verification_controller.dart';
+import 'controllers/progress_task_controller.dart';
+import 'controllers/reg_controller.dart';
+import 'controllers/task_count_controller.dart';
+
+
 
 class TaskManagerApp extends StatelessWidget {
   const TaskManagerApp({super.key});
